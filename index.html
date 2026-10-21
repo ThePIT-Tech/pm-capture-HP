@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14181f">
+  <title>PM Capture</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Home: loaded jobs -->
+  <section id="home" class="screen">
+    <header class="bar"><h1>PM Capture</h1></header>
+    <main class="pad">
+      <p class="muted">โหลดไฟล์งาน (.pmjob.json) ที่สร้างจากรายงานมาสเตอร์ แล้วถ่ายรูปตามรูปตัวอย่างทีละจุด</p>
+      <label class="btn primary block">
+        โหลดไฟล์งาน
+        <input id="jobFile" type="file" accept=".json,application/json" hidden>
+      </label>
+      <ul id="jobList" class="list"></ul>
+      <p id="storageInfo" class="muted small"></p>
+    </main>
+  </section>
+
+  <!-- Job: stations, phase, shot list, export -->
+  <section id="job" class="screen" hidden>
+    <header class="bar">
+      <button class="icon" data-go="home" aria-label="กลับ">‹</button>
+      <h1 id="jobTitle"></h1>
+    </header>
+    <main class="pad">
+      <div id="stationTabs" class="seg" role="tablist" aria-label="สถานี"></div>
+      <div class="seg" role="tablist" aria-label="ช่วง">
+        <button data-side="before">ก่อน PM (Before)</button>
+        <button data-side="after">หลัง PM (After)</button>
+      </div>
+      <div class="seg small-seg" role="tablist" aria-label="วิธีถ่าย">
+        <button data-mode="seq">ไล่ถ่ายตามลำดับ</button>
+        <button data-mode="pick">เลือกถ่ายเฉพาะจุด</button>
+      </div>
+      <div class="progress"><div id="progBar"></div></div>
+      <p id="progText" class="muted small"></p>
+      <button id="startBtn" class="btn primary block">เริ่มถ่าย</button>
+      <ul id="shotList" class="shots"></ul>
+      <button id="extraBtn" class="btn block">+ ถ่ายรูปเพิ่ม (ไม่มีรูปตัวอย่าง)</button>
+      <div class="exportBox">
+        <button id="exportBtn" class="btn primary block">ส่งออก zip ให้คอมทำรายงาน</button>
+        <p class="muted small">ส่งออกทุกสถานีทั้ง Before และ After รูปยังอยู่ในเครื่องจนกว่าจะลบงาน</p>
+      </div>
+    </main>
+  </section>
+
+  <!-- Camera -->
+  <section id="cam" class="screen dark" hidden>
+    <header class="bar dark">
+      <button class="icon" id="camClose" aria-label="ปิดกล้อง">✕</button>
+      <div class="camHead">
+        <div id="camWhere" class="small"></div>
+        <div id="camTitle"></div>
+      </div>
+    </header>
+    <div class="stageWrap">
+      <div id="stage" class="stage">
+        <video id="video" playsinline muted autoplay></video>
+        <img id="ghost" class="ghost" alt="">
+        <img id="still" class="still" alt="" hidden>
+        <div id="camMsg" class="camMsg" hidden></div>
+      </div>
+    </div>
+    <div class="camTools">
+      <label class="small">รูปตัวอย่างซ้อน <input id="ghostOpacity" type="range" min="0" max="80" value="35"></label>
+      <button id="refBtn" class="btn ghostBtn">ดูรูปตัวอย่าง</button>
+    </div>
+    <div id="shootBar" class="camBar">
+      <button id="skipBtn" class="btn ghostBtn">ข้าม</button>
+      <button id="shutter" class="shutter" aria-label="ถ่ายรูป"></button>
+      <label class="btn ghostBtn" id="nativeBtn">แอปกล้อง
+        <input id="nativeFile" type="file" accept="image/*" capture="environment" hidden>
+      </label>
+    </div>
+    <div id="reviewBar" class="camBar" hidden>
+      <button id="retakeBtn" class="btn ghostBtn">ถ่ายใหม่</button>
+      <button id="keepMoreBtn" class="btn ghostBtn">ใช้ + ถ่ายเพิ่ม</button>
+      <button id="keepBtn" class="btn primary">ใช้รูปนี้</button>
+    </div>
+  </section>
+
+  <!-- Full reference / extra-item picker -->
+  <dialog id="refDialog"><img id="refFull" alt="รูปตัวอย่าง"><button id="refClose" class="btn block">ปิด</button></dialog>
+  <dialog id="extraDialog">
+    <h2>รูปเพิ่มเติมของข้อไหน</h2>
+    <div id="extraItems" class="checks"></div>
+    <div class="row"><button id="extraCancel" class="btn">ยกเลิก</button><button id="extraOk" class="btn primary">ถ่าย</button></div>
+  </dialog>
+  <div id="toast" class="toast" hidden></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
